@@ -6,10 +6,12 @@ import Account from './routes/account';
 import Deposit from './routes/deposit';
 import Withdraw from './routes/withdraw';
 import Data from './routes/data';
+import Toast from './components/toast';
 
 function App() {
   return (
-    <div className="App card text-center">
+    <div className="card">
+        <Toast/>
         <NavBar/>
         <Routes>
             <Route path={'/'} element={<Home/>}/>
