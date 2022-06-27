@@ -10,7 +10,7 @@ function Toast() {
 
     useEffect(() => {
         resetToast()
-    }, [currentRoute.pathname])
+    }, [currentRoute.pathname, resetToast])
 
     if(toast.show) {
         return (
