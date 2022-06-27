@@ -4,6 +4,7 @@ import {accountsAtom, selectedAccountIdAtom} from '../recoil/atoms/accounts';
 import {toastAtom} from '../recoil/atoms/toast';
 import Dropdown from '../components/dropdown';
 import {selectedAccountSelector} from '../recoil/selectors/accounts';
+import { v4 as uuidv4 } from 'uuid';
 
 function Withdraw() {
     const [accounts, setAccounts] = useRecoilState(accountsAtom);
@@ -21,7 +22,8 @@ function Withdraw() {
                 transactions: [...selectedAccount.transactions, {
                     type: 'WITHDRAW',
                     amount,
-                    date: new Date().toLocaleDateString()
+                    date: new Date().toLocaleDateString(),
+                    id: uuidv4()
                 }]
             }
         })

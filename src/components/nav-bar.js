@@ -27,7 +27,7 @@ function NavBar() {
                     <Link className={getLinkClass('/withdraw')} to={'/withdraw'}>{'Withdraw'}</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className={getLinkClass('/data')} to={'/data'}>{'Data'}</Link>
+                    <Link className={getLinkClass('/transactions')} to={'/transactions'}>{'Transactions'}</Link>
                 </li>
             </ul>
         </div>

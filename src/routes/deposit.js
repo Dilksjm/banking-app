@@ -4,6 +4,8 @@ import {accountsAtom, selectedAccountIdAtom} from '../recoil/atoms/accounts';
 import Dropdown from '../components/dropdown';
 import {toastAtom} from '../recoil/atoms/toast';
 import {selectedAccountSelector} from '../recoil/selectors/accounts';
+import { v4 as uuidv4 } from 'uuid';
+
 
 function Deposit() {
     const [accounts, setAccounts] = useRecoilState(accountsAtom);
@@ -21,7 +23,8 @@ function Deposit() {
                 transactions: [...selectedAccount.transactions, {
                     type: 'DEPOSIT',
                     amount,
-                    date: new Date().toLocaleDateString()
+                    date: new Date().toLocaleDateString(),
+                    id: uuidv4()
                 }]
             }
         })

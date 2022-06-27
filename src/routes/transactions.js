@@ -4,7 +4,7 @@ import {accountsAtom, selectedAccountIdAtom} from '../recoil/atoms/accounts';
 import Dropdown from '../components/dropdown';
 import {selectedAccountSelector} from '../recoil/selectors/accounts';
 
-function Data() {
+function Transactions() {
     const accounts = useRecoilValue(accountsAtom);
     const [selectedAccountId, setSelectedAccountId] = useRecoilState(selectedAccountIdAtom);
     const selectedAccount = useRecoilValue(selectedAccountSelector)
@@ -22,7 +22,7 @@ function Data() {
                     <tbody>
                     {selectedAccount.transactions.map(transaction => {
                         return (
-                            <tr>
+                            <tr key={transaction.id}>
                                 <td>{transaction.date}</td>
                                 <td>{transaction.type}</td>
                                 <td>{transaction.amount}</td>
@@ -55,4 +55,4 @@ function Data() {
     );
 }
 
-export default Data;
+export default Transactions;

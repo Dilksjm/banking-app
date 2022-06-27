@@ -5,7 +5,7 @@ import {Route, Routes} from 'react-router-dom';
 import Account from './routes/account';
 import Deposit from './routes/deposit';
 import Withdraw from './routes/withdraw';
-import Data from './routes/data';
+import Transactions from './routes/transactions';
 import Toast from './components/toast';
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
             <Route path={'/account'} element={<Account/>}/>
             <Route path={'/deposit'} element={<Deposit/>}/>
             <Route path={'/withdraw'} element={<Withdraw/>}/>
-            <Route path={'/data'} element={<Data/>}/>
+            <Route path={'/transactions'} element={<Transactions/>}/>
         </Routes>
     </div>
   );
