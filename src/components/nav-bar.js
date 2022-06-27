@@ -10,6 +10,7 @@ function NavBar() {
         }
         return "nav-link"
     }
+
     return (
         <div className={'card-header'}>
             <ul className="nav nav-pills card-header-pills">

@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {useSetRecoilState} from 'recoil';
 import {toastAtom} from '../recoil/atoms/toast';
+import {accountsAtom} from '../recoil/atoms/accounts';
+import { v4 as uuidv4 } from 'uuid';
 
 function Account() {
     const [name, setName] = useState('');
@@ -13,20 +15,38 @@ function Account() {
         password: setPassword
     }
     const [passwordInvalid, setPasswordInvalid] = useState(false);
-    const setToast = useSetRecoilState(toastAtom)
+    const setToast = useSetRecoilState(toastAtom);
+    const setAccounts = useSetRecoilState(accountsAtom);
+
 
     const onChange = (input) => {
         idSetterMap[input.target.id](input.target.value);
     }
 
+    const createAccount = () => {
+        const id = uuidv4();
+        setAccounts((current) => ({
+            ...current,
+            [id]: {
+                name,
+                email,
+                password,
+                id,
+                balance: 0,
+                transactions: []
+            }
+        }))
+        setHasAccountBeenCreated(true);
+        setToast({show: true, message: 'Account Created'});
+    }
+
     const onSubmit = (event) => {
         event.preventDefault();
         if(!passwordInvalid) {
+            createAccount();
             for (const id in idSetterMap) {
                 idSetterMap[id]('')
             }
-            setToast({show: true, message: 'Account Created'});
-            setHasAccountBeenCreated(true);
         }
     }
 
