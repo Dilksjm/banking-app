@@ -1,34 +1,18 @@
 import React, {useState} from 'react';
-import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil';
-import {accountsAtom, selectedAccountIdAtom} from '../recoil/atoms/accounts';
-import Dropdown from '../components/dropdown';
-import {toastAtom} from '../recoil/atoms/toast';
-import {selectedAccountSelector} from '../recoil/selectors/accounts';
-import { v4 as uuidv4 } from 'uuid';
-
+import {useRecoilValue} from 'recoil';
+import {sessionIdAtom} from '../recoil/atoms/session';
+import {useGetAccount} from '../hooks/queries/account';
+import {usePostTransaction} from '../hooks/mutations/account';
+import {DEPOSIT} from '../constants';
 
 function Deposit() {
-    const [accounts, setAccounts] = useRecoilState(accountsAtom);
-    const [selectedAccountId, setSelectedAccountId] = useRecoilState(selectedAccountIdAtom);
-    const selectedAccount = useRecoilValue(selectedAccountSelector)
-    const [amount, setAmount] = useState(undefined);
-    const setToast = useSetRecoilState(toastAtom);
+    const sessionId = useRecoilValue(sessionIdAtom);
+    const {data: account} = useGetAccount(sessionId);
+    const [amount, setAmount] = useState(0);
+    const postTransactionMutation = usePostTransaction(account?.email);
 
     const onDeposit = () => {
-        setAccounts({
-            ...accounts,
-            [selectedAccountId]: {
-                ...selectedAccount,
-                balance: selectedAccount.balance + amount,
-                transactions: [...selectedAccount.transactions, {
-                    type: 'DEPOSIT',
-                    amount,
-                    date: new Date().toLocaleDateString(),
-                    id: uuidv4()
-                }]
-            }
-        })
-        setToast({show: true, message: 'Deposit Successful'});
+        postTransactionMutation.mutate({amount, type: DEPOSIT})
     }
     const onChange = (event) => {
         if(Number(event.target.value < 0)) {
@@ -44,20 +28,15 @@ function Deposit() {
             <h5 className="card-title text-center">{'Deposit'}</h5>
             <form className={'w-25 mx-auto'}>
                 <div className="form-group">
-                    <Dropdown
-                        defaultMessage={'Select An Account'}
-                        items={Object.values(accounts).map(account => ({id: account.id, text: account.name}))}
-                        noItemsMessage={'No accounts available'}
-                        onChange={setSelectedAccountId}
-                        selectedId={selectedAccountId}
-                    />
+                    <label>{'Account Email: '}</label>
+                    <div className={'d-inline ml-2'}>{account?.email}</div>
                 </div>
                 <div className="form-group">
                     <label>{'Current Balance: '}</label>
-                    <div className={'d-inline ml-2'}>{selectedAccountId ? selectedAccount.balance : 0}</div>
+                    <div className={'d-inline ml-2'}>{account ? account.balance : 0}</div>
                 </div>
                 <div className="form-group">
-                    <input type="number" className="form-control" id="amount" placeholder="Amount" required disabled={!selectedAccount} onChange={onChange} min={0} step={20} value={amount}/>
+                    <input type="number" className="form-control" id="amount" placeholder="Amount" required disabled={!account} onChange={onChange} min={0} step={20} value={account?.amount}/>
                 </div>
                 <button type="button" disabled={!Boolean(amount)} className="btn btn-primary" onClick={onDeposit}>{'Deposit'}</button>
             </form>

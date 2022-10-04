@@ -1,37 +1,24 @@
 import React, {useState} from 'react';
-import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil';
-import {accountsAtom, selectedAccountIdAtom} from '../recoil/atoms/accounts';
-import {toastAtom} from '../recoil/atoms/toast';
-import Dropdown from '../components/dropdown';
-import {selectedAccountSelector} from '../recoil/selectors/accounts';
-import { v4 as uuidv4 } from 'uuid';
+import {useRecoilValue} from 'recoil';
+import {sessionIdAtom} from '../recoil/atoms/session';
+import {useGetAccount} from '../hooks/queries/account';
+import {usePostTransaction} from '../hooks/mutations/account';
+import {WITHDRAW} from '../constants';
+
 
 function Withdraw() {
-    const [accounts, setAccounts] = useRecoilState(accountsAtom);
-    const [selectedAccountId, setSelectedAccountId] = useRecoilState(selectedAccountIdAtom);
-    const selectedAccount = useRecoilValue(selectedAccountSelector)
+    const sessionId = useRecoilValue(sessionIdAtom);
+    const {data: account} = useGetAccount(sessionId);
     const [amount, setAmount] = useState(undefined);
-    const setToast = useSetRecoilState(toastAtom);
+    const postTransactionMutation = usePostTransaction(account?.email);
+
 
     const onWithdraw = () => {
-        setAccounts({
-            ...accounts,
-            [selectedAccountId]: {
-                ...selectedAccount,
-                balance: selectedAccount.balance - amount,
-                transactions: [...selectedAccount.transactions, {
-                    type: 'WITHDRAW',
-                    amount,
-                    date: new Date().toLocaleDateString(),
-                    id: uuidv4()
-                }]
-            }
-        })
-        setToast({show: true, message: 'Withdraw Successful'});
+        postTransactionMutation.mutate({amount, type: WITHDRAW})
     }
     const onChange = (event) => {
-        if(Number(event.target.value > selectedAccount.balance)) {
-            setAmount(selectedAccount.balance);
+        if(Number(event.target.value > account.balance)) {
+            setAmount(account.balance);
         }
         else {
             setAmount(Number(event.target.value))
@@ -43,20 +30,15 @@ function Withdraw() {
             <h5 className="card-title text-center">{'Withdraw'}</h5>
             <form className={'w-25 mx-auto'}>
                 <div className="form-group">
-                    <Dropdown
-                        defaultMessage={'Select An Account'}
-                        items={Object.values(accounts).map(account => ({id: account.id, text: account.name}))}
-                        noItemsMessage={'No accounts available'}
-                        onChange={setSelectedAccountId}
-                        selectedId={selectedAccountId}
-                    />
+                    <label>{'Account Email: '}</label>
+                    <div className={'d-inline ml-2'}>{account?.email}</div>
                 </div>
                 <div className="form-group">
                     <label>{'Current Balance: '}</label>
-                    <div className={'d-inline ml-2'}>{selectedAccountId ? selectedAccount.balance : 0}</div>
+                    <div className={'d-inline ml-2'}>{account ? account.balance : 0}</div>
                 </div>
                 <div className="form-group">
-                    <input type="number" className="form-control" id="amount" placeholder="Amount" required disabled={!selectedAccount} onChange={onChange} min={0} step={20} value={amount} max={selectedAccountId ? selectedAccount.balance : 0}/>
+                    <input type="number" className="form-control" id="amount" placeholder="Amount" required disabled={!account} onChange={onChange} min={0} step={20} value={amount} max={account ? account.balance : 0}/>
                 </div>
                 <button type="button" disabled={!Boolean(amount)} className="btn btn-primary" onClick={onWithdraw}>{'Withdraw'}</button>
             </form>

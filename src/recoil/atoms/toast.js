@@ -6,6 +6,7 @@ export const toastAtom = atom({
     key: 'toast',
     default: {
         show: false,
-        message: null
+        message: null,
+        error: false
     }
 });

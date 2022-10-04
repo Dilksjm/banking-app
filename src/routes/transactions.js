@@ -1,15 +1,13 @@
 import React from 'react';
-import {useRecoilState, useRecoilValue} from 'recoil';
-import {accountsAtom, selectedAccountIdAtom} from '../recoil/atoms/accounts';
-import Dropdown from '../components/dropdown';
-import {selectedAccountSelector} from '../recoil/selectors/accounts';
+import {useRecoilValue} from 'recoil';
+import {sessionIdAtom} from '../recoil/atoms/session';
+import {useGetAccount} from '../hooks/queries/account';
 
 function Transactions() {
-    const accounts = useRecoilValue(accountsAtom);
-    const [selectedAccountId, setSelectedAccountId] = useRecoilState(selectedAccountIdAtom);
-    const selectedAccount = useRecoilValue(selectedAccountSelector)
+    const sessionId = useRecoilValue(sessionIdAtom);
+    const {data: account} = useGetAccount(sessionId);
     const getTable = () => {
-        if(selectedAccount) {
+        if(account) {
             return (
                 <table className="table table-striped table-bordered my-4">
                     <thead>
@@ -20,7 +18,7 @@ function Transactions() {
                     </tr>
                     </thead>
                     <tbody>
-                    {selectedAccount.transactions.map(transaction => {
+                    {account.transactions.map(transaction => {
                         return (
                             <tr key={transaction.id}>
                                 <td>{transaction.date}</td>
@@ -41,13 +39,8 @@ function Transactions() {
             <div className={'mx-auto w-25 d-flex flex-column justify-content-center'}>
                 <h5 className="card-title text-center">{'Transactions'}</h5>
                 <div className={'d-sm-flex mx-auto'}>
-                    <Dropdown
-                        defaultMessage={'Select An Account'}
-                        items={Object.values(accounts).map(account => ({id: account.id, text: account.name}))}
-                        noItemsMessage={'No accounts available'}
-                        onChange={setSelectedAccountId}
-                        selectedId={selectedAccountId}
-                    />
+                    <label>{'Account Email: '}</label>
+                    <div className={'d-inline ml-2'}>{account?.email}</div>
                 </div>
                 {getTable()}
             </div>

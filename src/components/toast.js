@@ -15,7 +15,7 @@ function Toast() {
     if(toast.show) {
         return (
 
-            <div style={{position: 'absolute', top:0, left:'50%', backgroundColor: 'green', width: '220px', marginLeft: '-110px', color: 'white', borderRadius:'4px', padding:'16px'}}>
+            <div style={{position: 'absolute', top:0, left:'50%', backgroundColor: toast.error ? 'red' : 'green', width: '220px', marginLeft: '-110px', color: 'white', borderRadius:'4px', padding:'16px'}}>
                 <div className={'ml-2 d-inline text-center'}>
                     {toast.message}
                 </div>
